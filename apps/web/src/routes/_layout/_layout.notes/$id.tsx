@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Calendar } from "lucide-react";
 import { getReviewStatus } from "@/lib/utils";
 import { Timer } from "lucide-react";
+import { webEnv } from "@/web";
+import notFound from "../../../not-found.svg";
 
 export const Route = createFileRoute("/_layout/_layout/notes/$id")({
   component: NoteDetail,
@@ -46,9 +48,18 @@ console.log("Valeur du contenu :", note);
 
       {note.image && (
         <img
-          src={note.image}
+           src={
+              note.image
+                ? `${webEnv.VITE_API_URL}${note.image}`
+                : notFound
+            }
           alt={note.title}
           className="w-full h-64 object-cover rounded-3xl mb-8 shadow-lg"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.onerror = null;
+            target.src = notFound;
+          }}
         />
       )}
 
