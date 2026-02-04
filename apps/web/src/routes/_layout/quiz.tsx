@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { updateNoteAPI, useNotes, type Note } from "@/hooks/useNotes";
 import { calculateSM2 } from "@/lib/sm2";
 import { Button } from "@/components/ui/button";
@@ -13,16 +13,26 @@ export const Route = createFileRoute("/_layout/quiz")({
 });
 
 function QuizComponent() {
-  const { notes, updateNote, addNote } = useNotes();
+  const { notes, updateNote, addNote, setNotes } = useNotes();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [recapInput, setRecapInput] = useState("");
 
+  useEffect(() => {
+    import("@/hooks/useNotes").then(mod => {
+      mod.getNotes().then(data => setNotes(data));
+    });
+  }, [setNotes]);
+
   const sessionNotes = useMemo(() => {
+    if (notes.length === 0) return [];
+
+    const now = Date.now(); // On définit 'now' ici
+    
     const due = notes.filter(
       (note) =>
-        (note.type === "flashcard" || !note.type) &&
-        note.nextReview <= Date.now(),
+        (note.type === "flashcard" || note.type === "note" || !note.type) &&
+        new Date(note.nextReview).getTime() <= now,
     );
 
     const alreadyDoneToday = notes.some(
@@ -33,20 +43,19 @@ function QuizComponent() {
 
     const mixed = [...due];
 
-    if (!alreadyDoneToday) {
+    if (!alreadyDoneToday && mixed.length > 0) {
       const dailyRecap: Note = {
-        id: "virtual-recap",
+        id: -1,
         type: "recap",
         title: "Récapitulatif de la journée",
         content: "",
-        createdAt: Date.now(),
+        createdAt: new Date().toISOString(),
         interval: 0,
         repetition: 0,
         easeFactor: 2.5,
-        nextReview: 0,
+        nextReview: new Date().toISOString(),
       };
-      const randomIndex = Math.floor(Math.random() * (due.length + 1));
-      mixed.splice(randomIndex, 0, dailyRecap);
+      mixed.push(dailyRecap);
     }
 
     return mixed;
@@ -75,22 +84,22 @@ function QuizComponent() {
     }
   };
 
-const handleRate = async (quality: number) => {
-  const result = calculateSM2(
-    quality,
-    currentNote.repetition,
-    currentNote.interval,
-    currentNote.easeFactor,
-  );
+  const handleRate = async (quality: number) => {
+    const result = calculateSM2(
+      quality,
+      currentNote.repetition,
+      currentNote.interval,
+      currentNote.easeFactor,
+    );
 
-  await updateNoteAPI(currentNote.id, result);
-  
-  // Met à jour l'ui
-  updateNote(currentNote.id, result);
-  
-  setShowAnswer(false);
-  setCurrentIndex((prev) => prev + 1);
-};
+    await updateNoteAPI(currentNote.id, result);
+
+    // Met à jour l'ui
+    updateNote(currentNote.id, result);
+
+    setShowAnswer(false);
+    setCurrentIndex((prev) => prev + 1);
+  };
 
   if (sessionNotes.length === 0) {
     return (
@@ -120,8 +129,6 @@ const handleRate = async (quality: number) => {
     );
   }
 
-  // }
-
   return (
     <div className="max-w-2xl mx-auto mt-[140px] px-4">
       <div className="flex justify-between items-center mb-8">
@@ -138,7 +145,7 @@ const handleRate = async (quality: number) => {
 
       <AnimatePresence mode="wait">
         <motion.div
-          key={(currentNote?.id || "end") + showAnswer}
+          key={`${currentNote?.id}-${showAnswer}`}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
