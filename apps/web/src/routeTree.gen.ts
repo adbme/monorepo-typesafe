@@ -13,7 +13,6 @@ import { Route as LayoutRouteImport } from './routes/_layout'
 import { Route as LayoutIndexRouteImport } from './routes/_layout/index'
 import { Route as LayoutQuizRouteImport } from './routes/_layout/quiz'
 import { Route as LayoutDocRouteImport } from './routes/_layout/doc'
-import { Route as LayoutLayoutNotesCreateBisRouteImport } from './routes/_layout/_layout.notes/createBis'
 import { Route as LayoutLayoutNotesCreateRouteImport } from './routes/_layout/_layout.notes/create'
 import { Route as LayoutLayoutNotesIdRouteImport } from './routes/_layout/_layout.notes/$id'
 
@@ -36,12 +35,6 @@ const LayoutDocRoute = LayoutDocRouteImport.update({
   path: '/doc',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutLayoutNotesCreateBisRoute =
-  LayoutLayoutNotesCreateBisRouteImport.update({
-    id: '/_layout/notes/createBis',
-    path: '/notes/createBis',
-    getParentRoute: () => LayoutRoute,
-  } as any)
 const LayoutLayoutNotesCreateRoute = LayoutLayoutNotesCreateRouteImport.update({
   id: '/_layout/notes/create',
   path: '/notes/create',
@@ -59,7 +52,6 @@ export interface FileRoutesByFullPath {
   '/quiz': typeof LayoutQuizRoute
   '/notes/$id': typeof LayoutLayoutNotesIdRoute
   '/notes/create': typeof LayoutLayoutNotesCreateRoute
-  '/notes/createBis': typeof LayoutLayoutNotesCreateBisRoute
 }
 export interface FileRoutesByTo {
   '/doc': typeof LayoutDocRoute
@@ -67,7 +59,6 @@ export interface FileRoutesByTo {
   '/': typeof LayoutIndexRoute
   '/notes/$id': typeof LayoutLayoutNotesIdRoute
   '/notes/create': typeof LayoutLayoutNotesCreateRoute
-  '/notes/createBis': typeof LayoutLayoutNotesCreateBisRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,25 +68,12 @@ export interface FileRoutesById {
   '/_layout/': typeof LayoutIndexRoute
   '/_layout/_layout/notes/$id': typeof LayoutLayoutNotesIdRoute
   '/_layout/_layout/notes/create': typeof LayoutLayoutNotesCreateRoute
-  '/_layout/_layout/notes/createBis': typeof LayoutLayoutNotesCreateBisRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/doc'
-    | '/quiz'
-    | '/notes/$id'
-    | '/notes/create'
-    | '/notes/createBis'
+  fullPaths: '/' | '/doc' | '/quiz' | '/notes/$id' | '/notes/create'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/doc'
-    | '/quiz'
-    | '/'
-    | '/notes/$id'
-    | '/notes/create'
-    | '/notes/createBis'
+  to: '/doc' | '/quiz' | '/' | '/notes/$id' | '/notes/create'
   id:
     | '__root__'
     | '/_layout'
@@ -104,7 +82,6 @@ export interface FileRouteTypes {
     | '/_layout/'
     | '/_layout/_layout/notes/$id'
     | '/_layout/_layout/notes/create'
-    | '/_layout/_layout/notes/createBis'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -141,13 +118,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutDocRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/_layout/notes/createBis': {
-      id: '/_layout/_layout/notes/createBis'
-      path: '/notes/createBis'
-      fullPath: '/notes/createBis'
-      preLoaderRoute: typeof LayoutLayoutNotesCreateBisRouteImport
-      parentRoute: typeof LayoutRoute
-    }
     '/_layout/_layout/notes/create': {
       id: '/_layout/_layout/notes/create'
       path: '/notes/create'
@@ -171,7 +141,6 @@ interface LayoutRouteChildren {
   LayoutIndexRoute: typeof LayoutIndexRoute
   LayoutLayoutNotesIdRoute: typeof LayoutLayoutNotesIdRoute
   LayoutLayoutNotesCreateRoute: typeof LayoutLayoutNotesCreateRoute
-  LayoutLayoutNotesCreateBisRoute: typeof LayoutLayoutNotesCreateBisRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -180,7 +149,6 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutIndexRoute: LayoutIndexRoute,
   LayoutLayoutNotesIdRoute: LayoutLayoutNotesIdRoute,
   LayoutLayoutNotesCreateRoute: LayoutLayoutNotesCreateRoute,
-  LayoutLayoutNotesCreateBisRoute: LayoutLayoutNotesCreateBisRoute,
 }
 
 const LayoutRouteWithChildren =
