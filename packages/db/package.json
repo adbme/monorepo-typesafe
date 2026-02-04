@@ -20,6 +20,7 @@
     "@monorepo-typesafe/env": "workspace:*",
     "dotenv": "catalog:",
     "drizzle-orm": "^0.45.1",
+    "drizzle-valibot": "^0.4.2",
     "postgres": "^3.4.5",
     "valibot": "catalog:"
   },
