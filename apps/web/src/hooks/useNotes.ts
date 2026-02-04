@@ -96,19 +96,15 @@ export const getNote = async (id: string) => {
 };
 
 /* { SAVE NOTE } */
-export const saveNote = async (note: Partial<Note>) => {
+export const saveNote = async (formData: FormData) => {
   try {
     const response = await fetch(`${API_URL}/notes`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(note),
+      body: formData,
     });
 
     if (!response.ok) throw new Error(`Erreur HTTP: ${response.status}`);
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (e) {
     console.error("erreur save note", e);
     throw e;
