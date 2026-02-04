@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { motion } from "framer-motion";
 import { ImagePlus, Save } from "lucide-react";
+import { webEnv } from "@/web";
 
 export const Route = createFileRoute("/_layout/_layout/notes/create")({
   component: CreateNote,
@@ -29,37 +30,35 @@ function CreateNote() {
     }
   };
 
-  const save = async () => {
-    if (!form.title.trim() || !form.content.trim() || !imageFile) {
-      return alert("Titre, contenu et image requis !");
-    }
+const save = async () => {
+  if (!form.title.trim() || !form.content.trim()) {
+    return alert("Titre et contenu requis !");
+  }
 
-    // 1. On prépare le FormData (indispensable pour envoyer un File)
-    const formData = new FormData();
-    formData.append("title", form.title);
-    formData.append("content", form.content);
-    formData.append("slug", form.title.toLowerCase().replace(/ /g, "-")); // Génération simple du slug
+  const formData = new FormData();
+  formData.append("title", form.title);
+  formData.append("content", form.content);
+  formData.append("type", "flashcard"); // On ajoute le type requis par ton backend
+  if (imageFile) {
     formData.append("image", imageFile);
+  }
 
-    try {
-      // 2. Appel à ton API Elysia
-      const response = await fetch("http://localhost:3000/posts", {
-        method: "POST",
-        body: formData,
-        // Note: Ne PAS mettre de Content-Type header, le navigateur le fait seul pour FormData
-      });
+  try {
+    const response = await fetch(`${webEnv.VITE_API_URL}/notes`, {
+      method: "POST",
+      body: formData,
+    });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log("Note sauvegardée:", data);
-        navigate({ to: "/" });
-      } else {
-        alert("Erreur lors de la sauvegarde");
-      }
-    } catch (error) {
-      console.error("Erreur réseau:", error);
+    if (response.ok) {
+      navigate({ to: "/" });
+    } else {
+      const err = await response.json();
+      alert(err.error || "Erreur sauvegarde");
     }
-  };
+  } catch (error) {
+    console.error("Erreur réseau:", error);
+  }
+};
 
   return (
     <motion.div
