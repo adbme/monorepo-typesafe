@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
-import { useNotes, type Note } from "@/hooks/useNotes";
+import { updateNoteAPI, useNotes, type Note } from "@/hooks/useNotes";
 import { calculateSM2 } from "@/lib/sm2";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, XCircle, Brain } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { saveNote } from "@/hooks/useNotes";
 
 export const Route = createFileRoute("/_layout/quiz")({
   component: QuizComponent,
@@ -17,63 +18,79 @@ function QuizComponent() {
   const [showAnswer, setShowAnswer] = useState(false);
   const [recapInput, setRecapInput] = useState("");
 
-const sessionNotes = useMemo(() => {
-  const due = notes.filter((note) => 
-    (note.type === 'flashcard' || !note.type) &&
-    note.nextReview <= Date.now()
-  );
+  const sessionNotes = useMemo(() => {
+    const due = notes.filter(
+      (note) =>
+        (note.type === "flashcard" || !note.type) &&
+        note.nextReview <= Date.now(),
+    );
 
-  const alreadyDoneToday = notes.some(n => 
-    n.type === 'recap' && 
-    new Date(n.createdAt).toDateString() === new Date().toDateString()
-  );
+    const alreadyDoneToday = notes.some(
+      (n) =>
+        n.type === "recap" &&
+        new Date(n.createdAt).toDateString() === new Date().toDateString(),
+    );
 
-  const mixed = [...due];
+    const mixed = [...due];
 
-  if (!alreadyDoneToday) {
-    const dailyRecap: Note = {
-      id: "virtual-recap",
-      type: "recap",
-      title: "Récapitulatif de la journée",
-      content: "",
-      createdAt: Date.now(),
-      interval: 0, repetition: 0, easeFactor: 2.5, nextReview: 0,
-    };
-    const randomIndex = Math.floor(Math.random() * (due.length + 1));
-    mixed.splice(randomIndex, 0, dailyRecap);
-  }
+    if (!alreadyDoneToday) {
+      const dailyRecap: Note = {
+        id: "virtual-recap",
+        type: "recap",
+        title: "Récapitulatif de la journée",
+        content: "",
+        createdAt: Date.now(),
+        interval: 0,
+        repetition: 0,
+        easeFactor: 2.5,
+        nextReview: 0,
+      };
+      const randomIndex = Math.floor(Math.random() * (due.length + 1));
+      mixed.splice(randomIndex, 0, dailyRecap);
+    }
 
-  return mixed;
-}, [notes]);
+    return mixed;
+  }, [notes]);
 
   const currentNote = sessionNotes[currentIndex] || null;
 
-const handleFinishRecap = () => {
-  addNote({
-    type: "recap",
-    title: "Récapitulatif du " + new Date().toLocaleDateString(),
-    content: recapInput,
-    // On ajoute manuellement une date de révision dans le futur
-    // Par exemple : + 365 jours
-    nextReview: Date.now() + 1000 * 60 * 60 * 24 * 365, 
-  } as any); // Le "as any" car addNote dans ton hook Omit certains champs
-
-  setCurrentIndex((prev) => prev + 1);
-  setRecapInput("");
-};
-
-  const handleRate = (quality: number) => {
-    const result = calculateSM2(
-      quality,
-      currentNote.repetition,
-      currentNote.interval,
-      currentNote.easeFactor,
+  const handleFinishRecap = async () => {
+    const formData = new FormData();
+    formData.append("type", "recap");
+    formData.append(
+      "title",
+      "Récapitulatif du " + new Date().toLocaleDateString(),
     );
+    formData.append("content", recapInput);
 
-    updateNote(currentNote.id, result);
-    setShowAnswer(false);
-    setCurrentIndex((prev) => prev + 1);
+    try {
+      const newNote = await saveNote(formData);
+
+      addNote(newNote);
+
+      setCurrentIndex((prev) => prev + 1);
+      setRecapInput("");
+    } catch (err) {
+      alert("Erreur lors de la sauvegarde du récap");
+    }
   };
+
+const handleRate = async (quality: number) => {
+  const result = calculateSM2(
+    quality,
+    currentNote.repetition,
+    currentNote.interval,
+    currentNote.easeFactor,
+  );
+
+  await updateNoteAPI(currentNote.id, result);
+  
+  // Met à jour l'ui
+  updateNote(currentNote.id, result);
+  
+  setShowAnswer(false);
+  setCurrentIndex((prev) => prev + 1);
+};
 
   if (sessionNotes.length === 0) {
     return (
@@ -102,7 +119,7 @@ const handleFinishRecap = () => {
       </div>
     );
   }
-  
+
   // }
 
   return (
@@ -189,4 +206,3 @@ const handleFinishRecap = () => {
     </div>
   );
 }
-
