@@ -110,3 +110,13 @@ export const saveNote = async (formData: FormData) => {
     throw e;
   }
 };
+
+/* { UPDATE NOTE API } */
+export const updateNoteAPI = async (id: string | number, data: any) => {
+  const response = await fetch(`${API_URL}/notes/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return await response.json();
+};
