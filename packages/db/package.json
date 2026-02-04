@@ -1,0 +1,31 @@
+{
+  "name": "@monorepo-typesafe/db",
+  "type": "module",
+  "exports": {
+    ".": {
+      "default": "./src/index.ts"
+    },
+    "./*": {
+      "default": "./src/*.ts"
+    }
+  },
+  "scripts": {
+    "db:push": "drizzle-kit push",
+    "db:start": "docker compose up -d",
+    "db:stop": "docker compose stop",
+    "db:studio": "drizzle-kit studio",
+    "db:down": "docker compose down -v"
+  },
+  "dependencies": {
+    "@monorepo-typesafe/env": "workspace:*",
+    "dotenv": "catalog:",
+    "drizzle-orm": "^0.45.1",
+    "postgres": "^3.4.5",
+    "valibot": "catalog:"
+  },
+  "devDependencies": {
+    "@monorepo-typesafe/config": "workspace:*",
+    "drizzle-kit": "^0.31.8",
+    "typescript": "catalog:"
+  }
+}

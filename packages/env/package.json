@@ -1,0 +1,17 @@
+{
+  "name": "@monorepo-typesafe/env",
+  "version": "1.0.0",
+  "type": "module",
+  "exports": {
+    "./server": "./src/server.ts",
+    "./web": "./src/web.ts"
+  },
+  "dependencies": {
+    "valibot": "catalog:"
+  },
+  "devDependencies": {
+    "@monorepo-typesafe/config": "workspace:*",
+    "typescript": "catalog:",
+    "@types/node": "^22.0.0"
+  }
+}

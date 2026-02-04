@@ -1,0 +1,12 @@
+{
+  "extends": "@monorepo-typesafe/config/tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": ["../../node_modules/@types"],
+    "types": ["bun"]
+  },
+  "include": ["src/**/*", "utils/**/*"]
+}
