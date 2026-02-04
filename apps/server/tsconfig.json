@@ -8,5 +8,5 @@
     "typeRoots": ["../../node_modules/@types"],
     "types": ["bun"]
   },
-  "include": ["src/**/*", "utils/**/*"]
+  "include": ["src/**/*", "utils/**/*", "../web/src/components", "../web/src/hooks", "../web/src/lib", "../web/src/routes"]
 }

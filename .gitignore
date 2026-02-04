@@ -1,5 +1,6 @@
 # dependencies (bun install)
 node_modules
+.bun
 
 # output
 out
@@ -12,6 +13,7 @@ coverage
 
 # logs
 logs
+*.log
 _.log
 report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
@@ -25,10 +27,12 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # caches
 .eslintcache
 .cache
+.turbo
 *.tsbuildinfo
 
 # IntelliJ based IDEs
 .idea
+.vscode
 
 # Finder (MacOS) folder config
 .DS_Store
