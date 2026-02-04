@@ -11,7 +11,6 @@ import {
 import { motion } from "framer-motion";
 import {
   fadeInUp,
-  headerVariants,
   containerVariants,
   cardVariants,
 } from "@/components/recal/animation";
