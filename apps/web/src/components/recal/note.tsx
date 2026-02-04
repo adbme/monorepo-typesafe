@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { type Note as NoteType } from "@/hooks/useNotes";
 import { getReviewStatus } from "@/lib/utils";
+import { webEnv } from "@/web";
+  import notFound from "../../not-found.svg";
+
 
 const Note = ({ note }: { note: NoteType }) => {
   const status = getReviewStatus(note.nextReview);
@@ -18,9 +21,19 @@ const Note = ({ note }: { note: NoteType }) => {
         </div>
         {note.image && (
           <img
-            src={note.image}
-            alt=""
+            src={
+              note.image
+                ? `${webEnv.VITE_API_URL}${note.image}`
+                : notFound
+            }
+            alt={note.title}
             className="mb-4 rounded h-32 w-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.onerror = null;
+              target.src =
+                notFound;
+            }}
           />
         )}
         <h2 className="text-lg font-bold truncate pr-16">{note.title}</h2>
