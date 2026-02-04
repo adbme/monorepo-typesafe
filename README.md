@@ -1,5 +1,6 @@
-# Monorepo Type-Safe (Bun + Elysia + Drizzle)
+<img width="2031" height="845" alt="Group 1000004802 (1)" src="https://github.com/user-attachments/assets/8ea37a19-f4e0-4658-9b72-6bc02dfc89cb" />
 
+# Monorepo Type-Safe (Bun + Elysia + Drizzle)
 Stack moderne ultra-rapide avec validation de type de bout en bout.
 
 ## 🛠 Structure
