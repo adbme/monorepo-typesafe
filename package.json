@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "bun run --filter '*' dev",
     "check-types": "bun run --filter '*' check-types",
-    "dev:server": "bun run --filter @monorepo-typesafe/server dev --env-file=../../.env",
+    "dev:server": "bun run --filter @monorepo-typesafe/server dev",
     "db:push": "bun run --filter @monorepo-typesafe/db db:push",
     "db:start": "bun run --filter @monorepo-typesafe/db db:start",
     "db:stop": "bun run --filter @monorepo-typesafe/db db:stop",
