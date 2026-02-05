@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 export type NoteType = "flashcard" | "recap";
+import { treaty } from "@elysiajs/eden";
+import type { App } from "../../../server/src/index";
 
 import { webEnv } from "@/web";
 
@@ -20,6 +22,35 @@ const API_URL = webEnv.VITE_API_URL;
 
 console.log("apiurl", API_URL);
 
+const client = treaty<App>(API_URL);
+
+export const getNotesElysia = async (query?: string, type?: string) => {
+  const { data, error } = await client.notes.get();
+
+  if (error) {
+    console.error("Erreur Elysia:", error);
+    throw error;
+  }
+
+  const allNotes = data || [];
+
+
+  return allNotes.filter((n) => {
+    const matchQuery = query
+      ? n.title.toLowerCase().includes(query.toLowerCase())
+      : true;
+
+    const isAll = !type || type.toLowerCase() === "tout";
+    
+    const normalizedTargetType = type?.toLowerCase().replace(/s$/, ""); 
+    const noteType = (n.type || "flashcard").toLowerCase();
+
+    const matchType = isAll ? true : noteType === normalizedTargetType;
+
+    return matchQuery && matchType;
+  });
+
+};
 
 export function useNotes() {
   const [notes, setNotes] = useState<Note[]>([]);
