@@ -2,7 +2,7 @@ import { createFileRoute, defer } from "@tanstack/react-router";
 import HeroSection from "@/components/recal/hero-section";
 import Notes from "@/components/recal/notes";
 import { NotesSkeleton } from "@/components/recal/notes-skeleton"; // Import ici
-import { getNotes } from "@/hooks/useNotes";
+import { getNotes, getNotesElysia } from "@/hooks/useNotes";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 
@@ -43,6 +43,13 @@ function App() {
       }),
     });
   };
+  
+  const elysiaGetNotes = async () => {
+    const notes = await getNotesElysia(query, type);
+
+    console.log("Notes from Elysia:", notes);
+    return notes;
+  };
 
   return (
     <div className="h-screen flex max-w-[1400px] flex-col mx-auto pt-[140px]">
@@ -62,6 +69,14 @@ function App() {
           }}
         />
         <div className="flex gap-2">
+          <Button
+            variant={!type ? "default" : "outline"}
+            size="sm"
+            onClick={() => elysiaGetNotes()}
+          >
+            Test
+          </Button>
+
           <Button
             variant={!type ? "default" : "outline"}
             size="sm"
